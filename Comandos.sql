@@ -79,3 +79,11 @@ C.nomecli,fonecli
 from tbos as O
 inner join tbclientes as C
 on (O.idcli = C.idcli);
+
+select * from tbusuarios;
+select * from tbusuarios where login='admin' and senha='123';
+
+select * from tbusuarios;
+-- cadastrando no usuario;
+insert into tbusuarios(iduser,usuario,fone,login,senha)
+values(4,'carla','2222-2222','carla','12345');
