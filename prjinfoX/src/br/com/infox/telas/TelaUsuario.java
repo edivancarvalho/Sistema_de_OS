@@ -28,6 +28,7 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
         initComponents();
         conexao = ModuloConexao.conector();
     }
+
     // Metodo para consulta usuarios;
     private void consultar() {
         String sql = "select * from tbusuarios where iduser=?";
@@ -51,12 +52,13 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
                 txtUsuarioFone.setText(null);
                 txtUsuarioLogin.setText(null);
                 txtUsuarioSenha.setText(null);
-                
+
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
     }
+
     // Metódo para adicionar usuarios
     private void adicionar() {
         String sql = "insert into tbusuarios(iduser,usuario,fone,login,senha,perfil) values(?,?,?,?,?,?)";
@@ -85,7 +87,7 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
                     txtUsuarioFone.setText(null);
                     txtUsuarioLogin.setText(null);
                     txtUsuarioSenha.setText(null);
-                    
+
                 }
             }
         } catch (Exception e) {
@@ -93,6 +95,65 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
         }
     }
 
+    // Criando o metódo para alterar os dados do usuarios;
+    private void alterar() {
+        String sql = "update tbusuarios set usuario=?,fone=?,login=?,senha=?,perfil=? where iduser=?";
+        try {
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, txtUsuarioNome.getText());
+            pst.setString(2, txtUsuarioFone.getText());
+            pst.setString(3, txtUsuarioLogin.getText());
+            pst.setString(4, txtUsuarioSenha.getText());
+            pst.setString(5, cboUsuarioPerfil.getSelectedItem().toString());
+            pst.setString(6, txtUsuarioId.getText());
+
+            if ((txtUsuarioId.getText().isEmpty()) || (txtUsuarioNome.getText().isEmpty()) || (txtUsuarioLogin.getText().isEmpty()) || (txtUsuarioSenha.getText().isEmpty())) {
+                JOptionPane.showMessageDialog(null, "Preencha todos os campos obrigatórios");
+            } else {
+
+                // a linha abaixo atualizar a tabela usuario com os dados do formulário.
+                // a estrutura abaixo é usada para confirmar a alteraçao dos dados na tabela
+                int adicionado = pst.executeUpdate();
+                // a linha abaixo server de apoio ao entendimento da lógica;
+                //System.out.println(adicionado);
+                if (adicionado > 0) {
+                    JOptionPane.showMessageDialog(null, "Dados do usuário alterados com sucesso");
+                    txtUsuarioId.setText(null);
+                    txtUsuarioNome.setText(null);
+                    txtUsuarioFone.setText(null);
+                    txtUsuarioLogin.setText(null);
+                    txtUsuarioSenha.setText(null);
+
+                }
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+    // Criando metodo resposavel pela remoção de usuarios;
+    private void remover(){
+        // A estrutura abaixo confirma a remoção do usuario;
+        int confirma = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja remover este usuário", "Atenção",JOptionPane.YES_NO_OPTION );
+        if (confirma == JOptionPane.YES_OPTION){
+            String sql = "delete from tbusuarios where iduser=?";
+            try {
+                pst = conexao.prepareStatement(sql);
+                pst.setString(1,txtUsuarioId.getText());
+                int apagado = pst.executeUpdate();
+                if (apagado > 0){
+                    JOptionPane.showMessageDialog(null, "Usuário removido com sucesso");
+                    txtUsuarioId.setText(null);
+                    txtUsuarioNome.setText(null);
+                    txtUsuarioFone.setText(null);
+                    txtUsuarioLogin.setText(null);
+                    txtUsuarioSenha.setText(null);
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -164,11 +225,21 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
         btnUsuarioUpdate.setToolTipText("Alterar");
         btnUsuarioUpdate.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnUsuarioUpdate.setPreferredSize(new java.awt.Dimension(80, 80));
+        btnUsuarioUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUsuarioUpdateActionPerformed(evt);
+            }
+        });
 
         btnUsuarioDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icones/delete.png"))); // NOI18N
         btnUsuarioDelete.setToolTipText("Deletar");
         btnUsuarioDelete.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnUsuarioDelete.setPreferredSize(new java.awt.Dimension(80, 80));
+        btnUsuarioDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUsuarioDeleteActionPerformed(evt);
+            }
+        });
 
         jLabel7.setText("* Campos Obrigatórios");
 
@@ -268,6 +339,16 @@ public class TelaUsuario extends javax.swing.JInternalFrame {
         // chamando o metódo adicionar;
         adicionar();
     }//GEN-LAST:event_btnUsuarioCreateActionPerformed
+
+    private void btnUsuarioUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsuarioUpdateActionPerformed
+        // chamando o metódo alterar;
+        alterar();
+    }//GEN-LAST:event_btnUsuarioUpdateActionPerformed
+
+    private void btnUsuarioDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsuarioDeleteActionPerformed
+        // Chamando o metódo remover;
+        remover();
+    }//GEN-LAST:event_btnUsuarioDeleteActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
