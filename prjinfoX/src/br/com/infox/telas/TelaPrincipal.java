@@ -70,10 +70,20 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         MenuCadCli.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.ALT_MASK));
         MenuCadCli.setText("Cliente");
+        MenuCadCli.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuCadCliActionPerformed(evt);
+            }
+        });
         MenuCad.add(MenuCadCli);
 
         MenuCadOs.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.ALT_MASK));
         MenuCadOs.setText("OS");
+        MenuCadOs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuCadOsActionPerformed(evt);
+            }
+        });
         MenuCad.add(MenuCadOs);
 
         MenuCadUsuario.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.ALT_MASK));
@@ -193,6 +203,20 @@ public class TelaPrincipal extends javax.swing.JFrame {
         usuario.setVisible(true);
         Desktop.add(usuario);
     }//GEN-LAST:event_MenuCadUsuarioActionPerformed
+
+    private void MenuCadCliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuCadCliActionPerformed
+        // Chamando a tela Cliente;
+        TelaCliente cliente = new TelaCliente();
+        cliente.setVisible(true);
+        Desktop.add(cliente);
+    }//GEN-LAST:event_MenuCadCliActionPerformed
+
+    private void MenuCadOsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuCadOsActionPerformed
+        // Chamando a tela OS;
+        TelaOS os = new TelaOS();
+        os.setVisible(true);
+        Desktop.add(os);
+    }//GEN-LAST:event_MenuCadOsActionPerformed
 
     /**
      * @param args the command line arguments
