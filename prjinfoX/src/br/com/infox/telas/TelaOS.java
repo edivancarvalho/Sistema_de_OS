@@ -1,14 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.com.infox.telas;
 
 import java.sql.*;
 import br.com.infox.dal.ModuloConexao;
+import java.util.HashMap;
 import javax.swing.JOptionPane;
 import net.proteanit.sql.DbUtils;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -19,11 +18,10 @@ public class TelaOS extends javax.swing.JInternalFrame {
     Connection conexao = null;
     PreparedStatement pst = null;
     ResultSet rs = null;
-    
+
     // a linha abaixo criar uma variavel para armazenar um tesxto de acoro com o radion button selecionado;
     private String tipo;
-    
-    
+
     /**
      * Creates new form TelaOS
      */
@@ -39,19 +37,19 @@ public class TelaOS extends javax.swing.JInternalFrame {
             pst.setString(1, txtCliPesquisar.getText() + "%");
             rs = pst.executeQuery();
             tblClientes.setModel(DbUtils.resultSetToTableModel(rs));
-            
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
     }
 
-    private void setar_campos(){
+    private void setar_campos() {
         int setar = tblClientes.getSelectedRow();
         txtCliId.setText(tblClientes.getModel().getValueAt(setar, 0).toString());
     }
-    
+
     // método para cadastrar uma OS
-    private void emitir_os(){
+    private void emitir_os() {
         String sql = "insert into tbos(tipo,situacao,equipamento,defeito,servico,tecnico,valor,idcli) values(?,?,?,?,?,?,?,?)";
         try {
             pst = conexao.prepareStatement(sql);
@@ -64,14 +62,14 @@ public class TelaOS extends javax.swing.JInternalFrame {
             // .replace substitui a virgula pelo ponto.
             pst.setString(7, txtOsValor.getText().replace(",", "."));
             pst.setString(8, txtCliId.getText());
-            
+
             // validação dos campos obrigatorio
-            if (txtCliId.getText().isEmpty()||(txtOsEquipamento.getText().isEmpty()||(txtOsDefeito.getText().isEmpty()))) {
+            if (txtCliId.getText().isEmpty() || (txtOsEquipamento.getText().isEmpty() || (txtOsDefeito.getText().isEmpty()))) {
                 JOptionPane.showMessageDialog(null, "Preencha todos os campos obrigatórios");
-                
+
             } else {
                 int adicionado = pst.executeUpdate();
-                if (adicionado > 0){
+                if (adicionado > 0) {
                     JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
                     txtCliId.setText(null);
                     txtOsEquipamento.setText(null);
@@ -81,13 +79,14 @@ public class TelaOS extends javax.swing.JInternalFrame {
                     txtOsValor.setText(null);
                 }
             }
-            
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
     }
+
     // Método para pesquisa uma OS
-    private void pesquisar_os(){
+    private void pesquisar_os() {
         //  a linha abaixo criar uma caixa e entrada do tipo Joptin Pane;
         String num_os = JOptionPane.showInputDialog("Número da OS");
         String sql = "select * from tbos where os= " + num_os;
@@ -104,7 +103,7 @@ public class TelaOS extends javax.swing.JInternalFrame {
                     tipo = "OS";
                 } else {
                     rbtOrcamento.setSelected(true);
-                    tipo="Orçamento";
+                    tipo = "Orçamento";
                 }
                 cboOsSit.setSelectedItem(rs.getString(4));
                 txtOsEquipamento.setText(rs.getString(5));
@@ -117,21 +116,119 @@ public class TelaOS extends javax.swing.JInternalFrame {
                 btnOsAdicionar.setEnabled(false);
                 txtCliPesquisar.setEnabled(false);
                 tblClientes.setVisible(false);
-                
+
                 // a linha com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException
                 // faz a validação da mensagem ao buscar por OS com carateres especial.
-                
             } else {
                 JOptionPane.showMessageDialog(null, "OS não cadastrada");
             }
         } catch (com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException e) {
             JOptionPane.showMessageDialog(null, "OS Inválida");
             //System.out.println(e);
-        } catch (Exception e2){
+        } catch (Exception e2) {
             JOptionPane.showMessageDialog(null, e2);
         }
     }
-    
+
+    // metodo para alterar uma OS
+    private void alterar_os() {
+        String sql = "update tbos set tipo=?,situacao=?,equipamento=?,defeito=?,servico=?,tecnico=?,valor=? where os=?";
+        try {
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, tipo);
+            pst.setString(2, cboOsSit.getSelectedItem().toString());
+            pst.setString(3, txtOsEquipamento.getText());
+            pst.setString(4, txtOsDefeito.getText());
+            pst.setString(5, txtOsServico.getText());
+            pst.setString(6, txtosTecnico.getText());
+            // .replace substitui a virgula pelo ponto.
+            pst.setString(7, txtOsValor.getText().replace(",", "."));
+            pst.setString(8, txtOs.getText());
+
+            // validação dos campos obrigatorio
+            if (txtCliId.getText().isEmpty() || (txtOsEquipamento.getText().isEmpty() || (txtOsDefeito.getText().isEmpty()))) {
+                JOptionPane.showMessageDialog(null, "Preencha todos os campos obrigatórios");
+
+            } else {
+                int adicionado = pst.executeUpdate();
+                if (adicionado > 0) {
+                    JOptionPane.showMessageDialog(null, "OS Alterada com sucesso");
+
+                    txtOs.setText(null);
+                    txtData.setText(null);
+                    txtCliId.setText(null);
+                    txtOsEquipamento.setText(null);
+                    txtOsDefeito.setText(null);
+                    txtOsServico.setText(null);
+                    txtosTecnico.setText(null);
+                    txtOsValor.setText(null);
+                    // habilitar os objetos
+                    btnOsAdicionar.setEnabled(true);
+                    txtCliPesquisar.setEnabled(true);
+                    tblClientes.setVisible(true);
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+
+    // Método para excluir uma OS
+    private void exluir_os() {
+        int confirma = JOptionPane.showConfirmDialog(null, "Tem certeza que desaj exluir esta OS?", "Atenção", JOptionPane.YES_NO_OPTION);
+        if (confirma == JOptionPane.YES_OPTION) {
+            String sql = "delete from tbos where os=?";
+            try {
+                pst = conexao.prepareStatement(sql);
+                pst.setString(1, txtOs.getText());
+                int apagado = pst.executeUpdate();
+                if (apagado > 0) {
+                    JOptionPane.showMessageDialog(null, "Os exluida com sucesso");
+
+                    txtOs.setText(null);
+                    txtData.setText(null);
+                    txtCliId.setText(null);
+                    txtOsEquipamento.setText(null);
+                    txtOsDefeito.setText(null);
+                    txtOsServico.setText(null);
+                    txtosTecnico.setText(null);
+                    txtOsValor.setText(null);
+                    // habilitar os objetos
+                    btnOsAdicionar.setEnabled(true);
+                    txtCliPesquisar.setEnabled(true);
+                    tblClientes.setVisible(true);
+
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+        }
+
+    }
+
+    //Método para imprimir a OS
+    private void imprimir_os() {
+        
+        // Imprimindo uam OS
+        int confirma = JOptionPane.showConfirmDialog(null, "Confirma a impressão desta OS?", " Atenção", JOptionPane.YES_NO_OPTION);
+        if (confirma == JOptionPane.YES_OPTION) {
+            // imprimindo com o framework JasperReports
+            try {
+                // usando a classe Hahmap para criar uum filtro
+                HashMap filtro = new HashMap();
+                filtro.put("os",Integer.parseInt(txtOs.getText()));
+                // usando a classes JasperPrint para preparar a impressão de um relatório
+                JasperPrint print = JasperFillManager.fillReport("/home/edivan/Documentos/GitHub/Sistema_de_OS/Ireports/os.jasper", filtro, conexao);
+                // alinha abaixo exibe a impressão atrves da clase jaspervier;
+                JasperViewer.viewReport(print, false);
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+        }
+
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -373,16 +470,31 @@ public class TelaOS extends javax.swing.JInternalFrame {
         btnOsAlterar.setToolTipText("Alterar");
         btnOsAlterar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnOsAlterar.setPreferredSize(new java.awt.Dimension(80, 80));
+        btnOsAlterar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOsAlterarActionPerformed(evt);
+            }
+        });
 
         btnOsExcluir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icones/delete.png"))); // NOI18N
         btnOsExcluir.setToolTipText("Excluir");
         btnOsExcluir.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnOsExcluir.setPreferredSize(new java.awt.Dimension(80, 80));
+        btnOsExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOsExcluirActionPerformed(evt);
+            }
+        });
 
         btnOsImprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icones/print2.png"))); // NOI18N
         btnOsImprimir.setToolTipText("Imprimir");
         btnOsImprimir.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnOsImprimir.setPreferredSize(new java.awt.Dimension(80, 80));
+        btnOsImprimir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOsImprimirActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -492,7 +604,7 @@ public class TelaOS extends javax.swing.JInternalFrame {
     private void rbtOrcamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtOrcamentoActionPerformed
         // Atribuindo um texto a varivel tipo se selecionado;
         tipo = "Orçamento";
-        
+
     }//GEN-LAST:event_rbtOrcamentoActionPerformed
 
     private void rbtOsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtOsActionPerformed
@@ -515,6 +627,21 @@ public class TelaOS extends javax.swing.JInternalFrame {
         // chamado o metodo pesquisar_os
         pesquisar_os();
     }//GEN-LAST:event_btnOsPesquisarActionPerformed
+
+    private void btnOsAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOsAlterarActionPerformed
+        // chamando o método alterar OS
+        alterar_os();
+    }//GEN-LAST:event_btnOsAlterarActionPerformed
+
+    private void btnOsExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOsExcluirActionPerformed
+        // Chamando o método para excluir uma OS
+        exluir_os();
+    }//GEN-LAST:event_btnOsExcluirActionPerformed
+
+    private void btnOsImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOsImprimirActionPerformed
+        // chamando o metodod par aimprimir uma os;
+        imprimir_os();
+    }//GEN-LAST:event_btnOsImprimirActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
