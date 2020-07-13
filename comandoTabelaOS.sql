@@ -11,3 +11,4 @@ describe tbos;
 
 alter table tbos add situacao varchar(20) not null after tipo;
 select * from tbos;
+
