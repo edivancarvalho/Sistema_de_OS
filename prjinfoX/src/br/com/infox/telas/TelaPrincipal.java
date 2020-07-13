@@ -5,9 +5,14 @@
  */
 package br.com.infox.telas;
 
+import br.com.infox.dal.ModuloConexao;
 import java.text.DateFormat;
 import java.util.Date;
 import javax.swing.JOptionPane;
+import java.sql.*;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -15,11 +20,15 @@ import javax.swing.JOptionPane;
  */
 public class TelaPrincipal extends javax.swing.JFrame {
 
+    Connection conexao = null;
+
     /**
      * Creates new form TelaPrincipal
      */
     public TelaPrincipal() {
         initComponents();
+        conexao = ModuloConexao.conector();
+
     }
 
     /**
@@ -41,6 +50,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         MenuCadOs = new javax.swing.JMenuItem();
         MenuCadUsuario = new javax.swing.JMenuItem();
         MenuRel = new javax.swing.JMenu();
+        MenuRelCli = new javax.swing.JMenuItem();
         MenuRelServicos = new javax.swing.JMenuItem();
         MenuOpc = new javax.swing.JMenu();
         MenuOpcSair = new javax.swing.JMenuItem();
@@ -101,8 +111,22 @@ public class TelaPrincipal extends javax.swing.JFrame {
         MenuRel.setText("Relatório");
         MenuRel.setEnabled(false);
 
+        MenuRelCli.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.ALT_MASK));
+        MenuRelCli.setText("Clientes");
+        MenuRelCli.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuRelCliActionPerformed(evt);
+            }
+        });
+        MenuRel.add(MenuRelCli);
+
         MenuRelServicos.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK));
         MenuRelServicos.setText("Serviços");
+        MenuRelServicos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuRelServicosActionPerformed(evt);
+            }
+        });
         MenuRel.add(MenuRelServicos);
 
         Menu.add(MenuRel);
@@ -185,7 +209,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private void MenuOpcSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuOpcSairActionPerformed
         // exibe uma caixa de diálogo;
         int sair = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja sair?", "Atenção", JOptionPane.YES_NO_OPTION);
-        if (sair == JOptionPane.YES_OPTION){
+        if (sair == JOptionPane.YES_OPTION) {
             System.exit(0);
         }
     }//GEN-LAST:event_MenuOpcSairActionPerformed
@@ -194,7 +218,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         // chamando a tela sobre;
         TelaSobre sobre = new TelaSobre();
         sobre.setVisible(true);
-        
+
     }//GEN-LAST:event_MenuAjuSobreActionPerformed
 
     private void MenuCadUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuCadUsuarioActionPerformed
@@ -217,6 +241,42 @@ public class TelaPrincipal extends javax.swing.JFrame {
         os.setVisible(true);
         Desktop.add(os);
     }//GEN-LAST:event_MenuCadOsActionPerformed
+
+    private void MenuRelCliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuRelCliActionPerformed
+        // gernando um realtorio de clientes
+        int confirma = JOptionPane.showConfirmDialog(null, "Confirma a impressão deste relatório?", " Atenção", JOptionPane.YES_NO_OPTION);
+        if (confirma == JOptionPane.YES_OPTION) {
+            // imprimindo relatorio com o framework JasperReports
+            try {
+                // usando a classes JasperPrint para preparar a impressão de um relatório
+                JasperPrint print = JasperFillManager.fillReport("/home/edivan/Documentos/GitHub/Sistema_de_OS/Ireports/clientes.jasper", null, conexao);
+                // alinha abaixo exibe o relatope atrves da clase jaspervier;
+                JasperViewer.viewReport(print, false);
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+        }
+    }//GEN-LAST:event_MenuRelCliActionPerformed
+
+    private void MenuRelServicosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuRelServicosActionPerformed
+
+        // gernando um realtorio de Serviços
+        int confirma = JOptionPane.showConfirmDialog(null, "Confirma a emissão deste relatório?", " Atenção", JOptionPane.YES_NO_OPTION);
+        if (confirma == JOptionPane.YES_OPTION) {
+            // emitindo relatorio com o framework JasperReports
+            try {
+                // usando a classes JasperPrint para preparar a impressão de um relatório
+                JasperPrint print = JasperFillManager.fillReport("/home/edivan/Documentos/GitHub/Sistema_de_OS/Ireports/serviços.jasper", null, conexao);
+                // alinha abaixo exibe o relatope atrves da clase jaspervier;
+                JasperViewer.viewReport(print, false);
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+        }
+
+    }//GEN-LAST:event_MenuRelServicosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -265,6 +325,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenu MenuOpc;
     private javax.swing.JMenuItem MenuOpcSair;
     public static javax.swing.JMenu MenuRel;
+    private javax.swing.JMenuItem MenuRelCli;
     private javax.swing.JMenuItem MenuRelServicos;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel lblData;
