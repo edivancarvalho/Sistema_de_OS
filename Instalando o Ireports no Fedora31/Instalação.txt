@@ -1,0 +1,58 @@
+#-----------HEADER-------------------------------------------------------------|
+# AUTOR             : Edivan Carvalho <edivancarvalho2008@hotmail.com>
+# HOMEPAGE          : https://github.com/edivancarvalho
+# DATA DE CRIAÇÃO   : 15/07/2020 às 17:37 
+# PROGRAMA          : SO - Fedora 31
+# VERSÃO            : 1.0.0
+# LICENÇA           : MIT
+# PEQUENA DESCRIÇÃO : Instalação de Feramentas de Desenvolvimento 
+#
+# CHANGELOG :
+#
+#------------------------------------------------------------------------------|
+
+# segue o link para efetuar o donwload, mais caso queria entra no site oficial fique avontande para realizar o donwload, estarei instalando a versao 5.6.0, neste versao o java 1.8 não é compartivel, onde este sera o foco em resolver este problema;
+Link: https://ufpr.dl.sourceforge.net/project/ireport/iReport/iReport-5.6.0/iReport-5.6.0.tar.gz
+
+faça o donwload e descompata a pasta;
+da permiçao de leitura e execução;
+
+2° Neste caso iremos instalar o java 1.7 JDK da oracle;
+caso o seu java ja esteje instalando nao tem problema, nao precisará removelo a versão atual;
+para saber a verao do java; faça;
+#java -version 
+
+entre no site da oracle e baixe a versao 1.7 depois de baixado, entre na pasta onde foi realizado o donwload e faça:
+link para download: 
+https://www.oracle.com/java/technologies/javase/javase7-archive-downloads.html
+# rpm -i jdk-7u80-linux-x64.rpm
+
+depois disso vc podera execuutar o comando;
+#java -version
+neste caso o sistema ainda ira fala que vc esta com a versao 1.8, mais nao se precocuper;
+mais o java foi instalado.
+
+entre na pasta;
+cd /usr/java
+
+neste pasta tera todas as versões do java nesse caso o "Reports" usar a versão 1.7 ou 1.6;
+va na pasta do programa Reports em:
+cd /home/edivan/Downloads/iReport-5.6.0/etc/
+
+dentro desta pasta tem um arquivo chamando 
+ireport.conf
+
+abra o arquivo e na linha que esta assim:
+#jdkhome="/path/to/jdk" 
+
+deixe ele desta forma especificando o caminho do java 1.7;
+jdkhome="/usr/java/jdk1.7.0_80"
+
+depois salver o arquivo e execute o programa; o programa raiz esta na pasta do programa reports;
+
+
+iReport-5.6.0/bin e execute o ireport;
+
+OBSERVAÇÂO: Lembre de da permissão ao arquivo;
+
+
